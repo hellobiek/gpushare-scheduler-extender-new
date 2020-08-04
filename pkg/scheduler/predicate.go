@@ -3,7 +3,7 @@ package scheduler
 import (
 	"github.com/AliyunContainerService/gpushare-scheduler-extender/pkg/cache"
 	"k8s.io/api/core/v1"
-	schedulerapi "k8s.io/kubernetes/pkg/scheduler/api"
+	schedulerv1 "k8s.io/kube-scheduler/extender/v1"
 )
 
 type Predicate struct {
@@ -12,7 +12,7 @@ type Predicate struct {
 	cache *cache.SchedulerCache
 }
 
-func (p Predicate) Handler(args schedulerapi.ExtenderArgs) *schedulerapi.ExtenderFilterResult {
+func (p Predicate) Handler(args schedulerv1.ExtenderArgs) *schedulerv1.ExtenderFilterResult {
 	pod := args.Pod
 	nodeNames := *args.NodeNames
 	canSchedule := make([]string, 0, len(nodeNames))
@@ -29,7 +29,7 @@ func (p Predicate) Handler(args schedulerapi.ExtenderArgs) *schedulerapi.Extende
 		}
 	}
 
-	result := schedulerapi.ExtenderFilterResult{
+	result := schedulerv1.ExtenderFilterResult{
 		NodeNames:   &canSchedule,
 		FailedNodes: canNotSchedule,
 		Error:       "",

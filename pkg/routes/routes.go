@@ -12,7 +12,7 @@ import (
 
 	"github.com/AliyunContainerService/gpushare-scheduler-extender/pkg/scheduler"
 
-	schedulerapi "k8s.io/kubernetes/pkg/scheduler/api"
+	"k8s.io/kube-scheduler/extender/v1"
 )
 
 const (
@@ -66,13 +66,13 @@ func PredicateRoute(predicate *scheduler.Predicate) httprouter.Handle {
 		body := io.TeeReader(r.Body, &buf)
 		// log.Print("info: ", predicate.Name, " ExtenderArgs = ", buf.String())
 
-		var extenderArgs schedulerapi.ExtenderArgs
-		var extenderFilterResult *schedulerapi.ExtenderFilterResult
+		var extenderArgs v1.ExtenderArgs
+		var extenderFilterResult *v1.ExtenderFilterResult
 
 		if err := json.NewDecoder(body).Decode(&extenderArgs); err != nil {
 
 			log.Printf("warn: failed to parse request due to error %v", err)
-			extenderFilterResult = &schedulerapi.ExtenderFilterResult{
+			extenderFilterResult = &v1.ExtenderFilterResult{
 				Nodes:       nil,
 				FailedNodes: nil,
 				Error:       err.Error(),
@@ -108,12 +108,12 @@ func BindRoute(bind *scheduler.Bind) httprouter.Handle {
 		body := io.TeeReader(r.Body, &buf)
 		// log.Print("info: extenderBindingArgs = ", buf.String())
 
-		var extenderBindingArgs schedulerapi.ExtenderBindingArgs
-		var extenderBindingResult *schedulerapi.ExtenderBindingResult
+		var extenderBindingArgs v1.ExtenderBindingArgs
+		var extenderBindingResult *v1.ExtenderBindingResult
 		failed := false
 
 		if err := json.NewDecoder(body).Decode(&extenderBindingArgs); err != nil {
-			extenderBindingResult = &schedulerapi.ExtenderBindingResult{
+			extenderBindingResult = &v1.ExtenderBindingResult{
 				Error: err.Error(),
 			}
 			failed = true

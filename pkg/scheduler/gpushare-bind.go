@@ -1,6 +1,7 @@
 package scheduler
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -45,7 +46,7 @@ func NewGPUShareBind(clientset *kubernetes.Clientset, c *cache.SchedulerCache) *
 func getPod(name string, namespace string, podUID types.UID, clientset *kubernetes.Clientset, c *cache.SchedulerCache) (pod *v1.Pod, err error) {
 	pod, err = c.GetPod(name, namespace)
 	if errors.IsNotFound(err) {
-		pod, err = clientset.CoreV1().Pods(namespace).Get(name, metav1.GetOptions{})
+		pod, err = clientset.CoreV1().Pods(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -53,7 +54,7 @@ func getPod(name string, namespace string, podUID types.UID, clientset *kubernet
 		return nil, err
 	}
 	if pod.UID != podUID {
-		pod, err = clientset.CoreV1().Pods(namespace).Get(name, metav1.GetOptions{})
+		pod, err = clientset.CoreV1().Pods(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 		if err != nil {
 			return nil, err
 		}
