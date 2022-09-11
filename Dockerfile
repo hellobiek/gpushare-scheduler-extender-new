@@ -1,11 +1,11 @@
 FROM golang:1.14.2-alpine as build
 
-WORKDIR gpushare-scheduler-extender
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.cn
+
+WORKDIR /go/src/github.com/AliyunContainerService/gpushare-scheduler-extender
+
 COPY . .
-
-ENV GOPROXY=https://goproxy.cn,direct
-
-RUN go mod vendor
 
 RUN go build -o /go/bin/gpushare-sche-extender cmd/*.go
 
